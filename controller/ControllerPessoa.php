@@ -2,20 +2,52 @@
 
 class ControllerPessoa{
 
+
+    ##utilização de "_" quando a variavel é privada##
+
     private $_method;
     private $_modelPessoa;
+    private $_codPessoa;
 
     public function __construct($model){
         
-        $this->modelPessoa = $model;
-        $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->_modelPessoa = $model;
+        $this->_method = $_SERVER['REQUEST_METHOD'];
+
+        ##PERIMITE RECEBER DADOS JSON ATRAVÉS DA REQUISIÇÃO##
+
+        $json = file_get_contents("php://input");
+        $dadosPessoa = json_decode($json);
+
+        $this->_codPessoa = $dadosPessoa->cod_Pessoa ?? null;
     }
+
     function router(){
-        switch ($variable) {
-            case 'value':
-                # code...
+
+        switch ($this->_method) {
+            case 'GET':
+
+                if (isset($this->_codPessoa)) {
+                    return $this->_modelPessoa->findById();
+                }
+                return $this->_modelPessoa->findAll();
+                
+                break;
+
+            case 'POST':
+
+                return $this->_modelPessoa->create();
+
+            break;
+            
+            case 'PUT':
+
                 break;
             
+            case 'DELETE':
+
+            break;
+
             default:
                 # code...
                 break;
